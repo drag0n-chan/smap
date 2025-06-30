@@ -34,6 +34,27 @@ check_dep() {
   fi
 }
 
+# Dependency check and auto-install function
+check_dep() {
+  if command -v "$1" &>/dev/null; then
+    echo "✅ $1: Installed"
+  else
+    echo "❌ $1: Missing - Installing..."
+
+    # Try installing with apt (Debian/Ubuntu/Kali)
+    if command -v apt &>/dev/null; then
+      sudo apt update -qq && sudo apt install -y "$1"
+      if command -v "$1" &>/dev/null; then
+        echo "✅ $1 installed successfully."
+      else
+        echo "❌ Failed to install $1. Please install it manually."
+      fi
+    else
+      echo "❌ apt package manager not found. Cannot auto-install $1."
+    fi
+  fi
+}
+
 # Dependency summary
 echo "🔍 Checking tool dependencies..."
 check_dep nmap
